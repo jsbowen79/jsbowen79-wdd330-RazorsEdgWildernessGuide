@@ -1,18 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Razor's Edge Wilderness Guide | Parks</title>
 
-    <link rel="stylesheet" href="/src/css/styles.css">
-</head>
-
-<body>
-    <h1>Parks Page</h1>
-
-    <script type="module" src="/src/js/main.js"></script>
-</body>
-
+    <link rel="stylesheet" href="/src/css/styles.css" />
+    <script type="module" src="/src/js/parks.js"></script>
+  </head>
+  <header id="header"></header>
+  <body>
+    <div class="highlight">PlaceHolder. Higlighted park goes here.</div>
+    <main>
+      <div class="stateSearch"><label for="stateSearch">Search Parks by State or Territory</label></div>
+      <div class="regionSearch"><label for="regionSearch">Search Parks by Region</label></div>
+      <div class="activitySearch"><label for="activitySearch">Search Parks by Activity</label></div>
+      <div class="keywordSearch"><label for="keywordSearch">Search Parks by Keyword</label></div>
+      <div id="cardsContainer"></div>
+    </main>
+    <footer id="footer"></footer>
+  </body>
 </html>
