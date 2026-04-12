@@ -187,7 +187,6 @@ export function loadSpinners() {
 export async function renderHighlight(createTemplateFn) {
   const { template, parkData } = await createTemplateFn();
   renderWithTemplate(template, document.querySelector(".highlight"));
-  console.log(parkData);
   listActivities({ parkData: parkData, connector: "<br>" });
   loadSpinners();
 }

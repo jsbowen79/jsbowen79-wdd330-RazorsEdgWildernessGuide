@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
   loadModules().then(() => {
     //Load wayfinding
     const homeEL = document.getElementById("home");
-    console.log(homeEL);
     homeEL.classList.add("active");
     const parksEL = document.getElementById("parks");
     parksEL.classList.remove("active");

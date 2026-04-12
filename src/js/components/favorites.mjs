@@ -29,7 +29,6 @@ export async function getFavoriteList() {
 }
 
 export async function populateFavoriteList() {
-  console.log("in populate favorites");
   const parksData = await getFavoriteList();
   const listEL = document.querySelector("#favorite");
   if (parksData) {

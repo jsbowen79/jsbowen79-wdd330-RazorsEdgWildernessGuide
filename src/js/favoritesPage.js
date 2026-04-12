@@ -8,11 +8,10 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 async function loadModules() {
   await loadHeaderFooter();
-  console.log("in loadModules")
-    console.log("DOM loaded")
-    await populateFavoriteList();
-    await activateTableListeners();
-    await activateDeleteListeners();
+
+  await populateFavoriteList();
+  await activateTableListeners();
+  await activateDeleteListeners();
 }
 
 loadModules().then(() => {
