@@ -5,8 +5,7 @@ import { fetchNPS } from "../services/api.mjs";
  ***************************************************************************************/
 function stateOptions() {
   const stateOptionsTemplate = `    
-    <select id="stateSearch"">
-    <option value=""">All States</option>
+    <option value="">All States</option>
     <option  value="AK">Alaska</option>
     <option  value="AL">Alabama</option>
     <option  value="AR">Arkansas</option>
@@ -62,8 +61,7 @@ function stateOptions() {
     <option  value="WA">Washington</option>
     <option  value="WI">Wisconsin</option>
     <option  value="WV">West Virginia</option>
-    <option  value="WY">Wyoming</option>
-</select">`;
+    <option  value="WY">Wyoming</option>`;
   return stateOptionsTemplate;
 }
 
@@ -72,7 +70,7 @@ function stateOptions() {
  ***************************************************************************************/
 function regionsTemplate() {
   const regionsTemplate = `
-    <select id="regionSearch">
+    <option value="">All Regions</option>
     <option value="WA,OR,CA,NV,ID,MT,WY,UT,CO,AK,HI">West</option>
     <option value="AZ,NM,TX,OK">Southwest</option>
     <option value="ND,SD,NE,KS,MN,IA,MO,WI,IL,IN,MI,OH">Midwest</option>
@@ -88,7 +86,6 @@ function regionsTemplate() {
  ***************************************************************************************/
 function activitiesTemplate() {
   const template = `
-    <select id="activitySearch">
     <option value="">All Activities</option>
     <option value="ATV Off-Roading">ATV Off-Roading</option>
     <option value="Arts and Crafts">Arts and Crafts</option>
@@ -193,7 +190,7 @@ function activitiesTemplate() {
     <option value="Water Skiing">Water Skiing</option>
     <option value="Whitewater Rafting">Whitewater Rafting</option>
     <option value="Wildlife Watching">Wildlife Watching</option>
-    </select> `;
+    `;
   return template;
 }
 
@@ -201,27 +198,27 @@ function activitiesTemplate() {
  * Populate State search box in DOM
  ***************************************************************************************/
 export function renderStateSearch() {
-  const stateSearchEL = document.querySelector(".stateSearch");
+  const stateSearchEL = document.querySelector("#stateSearch");
   const contents = stateOptions();
-  stateSearchEL.innerHTML += contents;
+  stateSearchEL.innerHTML = contents;
 }
 
 /****************************************************************************************
  * Populate Region search box in DOM
  ***************************************************************************************/
 export function renderRegionSearch() {
-  const regionSearchEL = document.querySelector(".regionSearch");
+  const regionSearchEL = document.querySelector("#regionSearch");
   const contents = regionsTemplate();
-  regionSearchEL.innerHTML += contents;
+  regionSearchEL.innerHTML = contents;
 }
 
 /****************************************************************************************
  * Populate ActivitySearch box in DOM
  ***************************************************************************************/
 export function renderActivitySearch() {
-  const activitySearchEL = document.querySelector(".activitySearch");
+  const activitySearchEL = document.querySelector("#activitySearch");
   const contents = activitiesTemplate();
-  activitySearchEL.innerHTML += contents;
+  activitySearchEL.innerHTML = contents;
 }
 
 /****************************************************************************************
