@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Keep track of your favorite national parks.">
     <meta name="author" content="Joseph Bowen">
-    <meta name="description" content="Search the Nation Park Services Database for Parks by state, region, or activity.">
-    <title>Razor's Edge Wilderness Guide | Parks</title>
+    <title>Razor's Edge Wilderness Guide | Favorites</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -13,27 +13,15 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/src/css/styles.css" />
-    <script type="module" src="/src/js/parks.js"></script>
+    <script type="module" src="/src/js/favoritesPage.js"></script>
   </head>
   <header id="header"></header>
   <body>
-    <div class="highlight"></div>
+    <h1>Favorite National Parks</h1>
 
     <main>
-      <div class="stateSearch">
-        <label for="stateSearch">Search Parks by State or Territory</label>
-      </div>
-      <div class="regionSearch">
-        <label for="regionSearch">Search Parks by Region</label>
-      </div>
-      <div class="activitySearch">
-        <label for="activitySearch">Search Parks by Activity</label>
-      </div>
-      <div class="searchNearMe">
-        <p id="parksNearMe">Find Parks Near Me</p>
-      </div>
+      <div class="nearList" id="favorite"></div>
       <div id="cardsContainer"></div>
-      <div class="navBtns"></div>
     </main>
     <footer id="footer"></footer>
   </body>

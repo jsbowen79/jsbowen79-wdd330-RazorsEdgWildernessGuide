@@ -1,12 +1,10 @@
-import { fetchNPS } from "../services/api.mjs"
-import { loadSpinners, createCardTemplate, renderWithTemplate, listActivities } from "../utils/utils.mjs"
+import { fetchNPS } from "../services/api.mjs";
 
 /****************************************************************************************
  * Create Template for State Search box
  ***************************************************************************************/
 function stateOptions() {
-
-const stateOptionsTemplate = `    
+  const stateOptionsTemplate = `    
     <select id="stateSearch"">
     <option value=""">All States</option>
     <option  value="AK">Alaska</option>
@@ -65,15 +63,15 @@ const stateOptionsTemplate = `
     <option  value="WI">Wisconsin</option>
     <option  value="WV">West Virginia</option>
     <option  value="WY">Wyoming</option>
-</select">`
-    return stateOptionsTemplate
+</select">`;
+  return stateOptionsTemplate;
 }
 
 /****************************************************************************************
  * Create Template for Region Search box
  ***************************************************************************************/
 function regionsTemplate() {
-    const regionsTemplate = `
+  const regionsTemplate = `
     <select id="regionSearch">
     <option value="WA,OR,CA,NV,ID,MT,WY,UT,CO,AK,HI">West</option>
     <option value="AZ,NM,TX,OK">Southwest</option>
@@ -81,15 +79,15 @@ function regionsTemplate() {
     <option value="AR,LA,MS,AL,TN,KY,WV,VA,NC,SC,GA,FL">Southeast</option>
     <option value="ME,NH,VT,MA,RI,CT,NY,NJ,PA,DE,MD,DC">Northeast</option>
     <option value="PR,VI,GU,AS,MP">US Territories</option>
-    `
-    return regionsTemplate
+    `;
+  return regionsTemplate;
 }
 
 /****************************************************************************************
  * Create Template for Activities Search box
  ***************************************************************************************/
 function activitiesTemplate() {
-    const template = `
+  const template = `
     <select id="activitySearch">
     <option value="">All Activities</option>
     <option value="ATV Off-Roading">ATV Off-Roading</option>
@@ -195,41 +193,41 @@ function activitiesTemplate() {
     <option value="Water Skiing">Water Skiing</option>
     <option value="Whitewater Rafting">Whitewater Rafting</option>
     <option value="Wildlife Watching">Wildlife Watching</option>
-    </select> `
-    return template; 
+    </select> `;
+  return template;
 }
 
 /****************************************************************************************
  * Populate State search box in DOM
  ***************************************************************************************/
 export function renderStateSearch() {
-    const stateSearchEL = document.querySelector(".stateSearch"); 
-    const contents = stateOptions(); 
-    stateSearchEL.innerHTML += contents; 
+  const stateSearchEL = document.querySelector(".stateSearch");
+  const contents = stateOptions();
+  stateSearchEL.innerHTML += contents;
 }
 
 /****************************************************************************************
  * Populate Region search box in DOM
  ***************************************************************************************/
 export function renderRegionSearch() {
-    const regionSearchEL = document.querySelector(".regionSearch"); 
-    const contents = regionsTemplate(); 
-    regionSearchEL.innerHTML += contents; 
+  const regionSearchEL = document.querySelector(".regionSearch");
+  const contents = regionsTemplate();
+  regionSearchEL.innerHTML += contents;
 }
 
 /****************************************************************************************
  * Populate ActivitySearch box in DOM
  ***************************************************************************************/
 export function renderActivitySearch() {
-    const activitySearchEL = document.querySelector(".activitySearch")
-    const contents = activitiesTemplate(); 
-    activitySearchEL.innerHTML += contents; 
+  const activitySearchEL = document.querySelector(".activitySearch");
+  const contents = activitiesTemplate();
+  activitySearchEL.innerHTML += contents;
 }
 
 /****************************************************************************************
- * Add master filter function 
+ * Add master filter function
  ***************************************************************************************/
-function applyFilters(data, { state, region, activity }) {
+export function applyFilters(data, { state, region, activity }) {
   let filtered = [...data];
 
   // Filter state OR Region (NOT both)
@@ -254,81 +252,95 @@ function applyFilters(data, { state, region, activity }) {
 }
 
 /****************************************************************************************
- * Activate listeners for filters
- ***************************************************************************************/ 
-export function activateFilterListeners() {
-  const stateSelect = document.querySelector("#stateSearch");
-  const regionSelect = document.querySelector("#regionSearch");
-  const activitySelect = document.querySelector("#activitySearch");
+ * Get user Location from browser
+ ***************************************************************************************/
+export function getLocation() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = parseFloat(position.coords.latitude);
+        const lon = parseFloat(position.coords.longitude);
+        resolve({ lat, lon });
+      },
+      (error) => reject(error),
+    );
+  });
+}
 
-  async function handleFilters() {
-    const state = stateSelect.value;
-    const region = regionSelect.value;
-    const activity = activitySelect.value;
+/******************************************************************************
+ * Calculate distance
+ *****************************************************************************/
+function calculateDistance(lonUser, latUser, lonPark, latPark) {
+  const R = 3958.8;
 
-    const response = (await fetchNPS(`/parks?limit=500`)).data;
+  const dLat = ((latPark - latUser) * Math.PI) / 180;
+  const dLon = ((lonPark - lonUser) * Math.PI) / 180;
 
-    const filteredData = applyFilters(response, {
-      state,
-      region,
-      activity,
-    });
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((latUser * Math.PI) / 180) *
+      Math.cos((latPark * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
 
-    renderCards(filteredData);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+/******************************************************************************
+ * Get State from Coordinates
+ *****************************************************************************/
+
+async function getStateFromCoords(lat, lon) {
+  const token = import.meta.env.VITE_MAPBOX_TOKEN;
+
+  const res = await fetch(
+    `https://api.mapbox.com/geocoding/v5/mapbox.places/${lon},${lat}.json?access_token=${token}`,
+  );
+
+  const data = await res.json();
+
+  const context = data.features[0].context;
+
+  const state = context.find((c) => c.id.includes("region"));
+
+  return state.short_code.split("-")[1].toUpperCase(); // "us-co" → "CO"
+}
+
+/******************************************************************************
+ * Filter Parks by distance
+ *****************************************************************************/
+export async function findNearbyParks(userLat, userLon) {
+  const stateCode = await getStateFromCoords(userLat, userLon);
+
+  let parameters = `/parks?stateCode=${stateCode}`;
+  let data = await fetchNPS(parameters);
+
+  if (data.data.length == 0) {
+    parameters = "/parks?stateCode=CO";
+    data = await fetchNPS(parameters);
   }
 
-  // Attach SAME handler to all
-  stateSelect.addEventListener("change", handleFilters);
-  regionSelect.addEventListener("change", handleFilters);
-  activitySelect.addEventListener("change", handleFilters);
+  const parksWithDistance = data.data.map((park) => {
+    const lat = parseFloat(park.latitude);
+    const lon = parseFloat(park.longitude);
+
+    const distance = calculateDistance(userLat, userLon, lat, lon);
+
+    return {
+      park,
+      lat,
+      lon,
+      distance,
+    };
+  });
+
+  // Sort by distance
+  parksWithDistance.sort((a, b) => a.distance - b.distance);
+
+  // Get closest 10
+  const nearest = parksWithDistance.slice(0, 10);
+
+  return nearest;
 }
-  
-/****************************************************************************************
- * Render cards from filter results 6 at a time. 
- ***************************************************************************************/
-function renderCards(data, begin = 0) {
-    begin = Math.max(0, begin);
-    begin = Math.min(begin, data.length); 
-    
-    const start = begin; 
-    const end = Math.min((start + 6), data.length); 
-    const container = document.getElementById("cardsContainer");
-    container.innerHTML = ""; 
-
-    for (let i = start; i < end; i++) {
-        const cardEL = document.createElement("div");
-        container.appendChild(cardEL);
-        
-        const { template, parkData } = createCardTemplate(data[i]);
-        
-        renderWithTemplate(template, cardEL);
-        
-        const listEL = cardEL.querySelector(".activitiesList");
-        listActivities(parkData, listEL);
-    }
-    loadSpinners();
-    const nav = document.createElement('div'); 
-    
-    if (start > 0) {
-        const prevEL = document.createElement("button"); 
-        prevEL.textContent = "Prev"; 
-        
-        prevEL.addEventListener("click", () => {
-            renderCards(data, (start - 6))
-        })
-        nav.appendChild(prevEL); 
-    }
-
-    if (end < data.length) {
-        const nextEL = document.createElement("button"); 
-        nextEL.textContent = "Next"; 
-        
-        nextEL.addEventListener("click", () => {
-            renderCards(data, end)
-        })
-        nav.appendChild(nextEL);
-    }
-
-    container.appendChild(nav); 
-}
-  

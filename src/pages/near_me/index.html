@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Search the National Park Service's database for parks near you!">
+    <meta name="author" content="Joseph Bowen">
+    <title>Razor's Edge Wilderness Guide | Near Me</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/css/styles.css" />
+    <script type="module" src="/src/js/near_me.js"></script>
+  </head>
+  <header id="header"></header>
+  <body>
+    <h1>National Parks Near you</h1>
+    <p>(please allow access to location)</p>
+
+    <main>
+      <div class="largeMap"></div>
+      <div class="nearList"></div>
+      <div id="cardsContainer" class="hide"></div>
+    </main>
+    <footer id="footer"></footer>
+  </body>
+</html>
